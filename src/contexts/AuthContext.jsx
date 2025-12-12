@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     if (storedUsers) {
       setUsers(JSON.parse(storedUsers));
     }
-    const storedCurrentUser = localStorage.getItem('currentUser');
+    const storedCurrentUser = sessionStorage.getItem('currentUser');
     if (storedCurrentUser) {
       setCurrentUser(storedCurrentUser);
     }
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     const user = users.find(u => u.username === username && u.password === password);
     if (user) {
       setCurrentUser(username);
-      localStorage.setItem('currentUser', username);
+      sessionStorage.setItem('currentUser', username);
       return true;
     }
     return false;
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('currentUser');
+    sessionStorage.removeItem('currentUser');
   };
 
   return (

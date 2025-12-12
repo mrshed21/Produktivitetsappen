@@ -15,7 +15,7 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
-    if (!username || !password) {
+    if (!username.trim() || !password.trim()) {
       setError('Vänligen fyll i alla fält');
       return;
     }

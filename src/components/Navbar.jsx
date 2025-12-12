@@ -1,7 +1,10 @@
 import { NavLink , useNavigate} from "react-router-dom";
 import "./navbar.css";
+import { useAuth } from "../contexts/AuthContext";
 
 const Navbar = () => {
+    const { currentUser, logout } = useAuth();
+
   const navigate = useNavigate();
     const navItems = [
         { name: "Startsida", path: "/" },
@@ -22,8 +25,16 @@ const Navbar = () => {
         ))}
       </ul>
       <div className="nav-user">
-        <span className="username">currentUser</span>
-        <button onClick={() => navigate("/login")} className="btn-primary">Logga in </button>
+        {currentUser &&
+        <span className="username">Hej {currentUser}</span>
+        }
+        {currentUser ? (
+          <button onClick={logout} className="btn-logout">
+            Logga ut
+          </button>
+        ) : (
+          <button onClick={() => navigate("/login")} className="btn-primary">Logga in </button>
+        )}
       </div>
     </nav>
   );
