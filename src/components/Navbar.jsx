@@ -26,7 +26,7 @@ const Navbar = () => {
       </ul>
       <div className="nav-user">
         {currentUser &&
-        <span className="username">Hej {currentUser}</span>
+        <span className="username">{currentUser}</span>
         }
         {currentUser ? (
           <button onClick={logout} className="btn-logout">

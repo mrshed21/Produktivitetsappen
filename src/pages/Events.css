@@ -1,0 +1,118 @@
+.events-page {
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.event-form {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.events-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.event-card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-left: 4px solid #4f46e5;
+}
+
+.event-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.event-card.past-event {
+  opacity: 0.6;
+  border-left-color: #64748b;
+}
+
+.event-card.past-event h3,
+.event-card.past-event .event-time {
+  color: #64748b;
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.event-header h3 {
+  font-size: 1.25rem;
+  color: #1e293b;
+}
+
+.past-badge {
+  padding: 0.25rem 0.75rem;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.event-time {
+  margin-bottom: 1rem;
+}
+
+.time-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.time-label {
+  font-weight: 600;
+  color: #1e293b;
+  min-width: 50px;
+}
+
+.event-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-buttons button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.filter-buttons button:hover {
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+.filter-buttons button.active {
+  background-color: #4f46e5;
+  color: white;
+  border-color: #4f46e5;
+}

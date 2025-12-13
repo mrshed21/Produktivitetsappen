@@ -2,6 +2,7 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 
 import { AuthProvider } from "./contexts/AuthContext";
+import { DataProvider } from "./contexts/DataContext";
 
 // Importing all the page components
 import HomePage from "./pages/HomePage";
@@ -11,13 +12,14 @@ import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 
-// Importing the Navbar component
+// Importing the components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 function App() {
   return (
     <AuthProvider>
+      <DataProvider>
       <div className="App">
         <Navbar />
         <div className="content">
@@ -32,6 +34,7 @@ function App() {
         </div>
         <Footer />
       </div>
+      </DataProvider>
     </AuthProvider>
   );
 }
