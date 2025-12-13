@@ -42,6 +42,35 @@ export const DataProvider = ({ children }) => {
   }, []);
   // -----------\\ Fetch quote \\----------- //
 
+  //------------ Todos CRUD operations -----------//
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+  
+  const addTodo = (todo) => {
+    if (!currentUser) return;
+    const newTodo = {
+      ...todo,
+      id: crypto.randomUUID(),
+      userId: currentUser,
+      createdAt: new Date().toISOString(),
+    };
+    const newTodos = [...todos, newTodo];
+    setTodos(newTodos);
+  };
+  
+  const updateTodo = (id, updates) => {
+    const newTodos = todos.map((t) => (t.id === id ? { ...t, ...updates } : t));
+    setTodos(newTodos);
+  };
+  
+  const deleteTodo = (id) => {
+    const newTodos = todos.filter((t) => t.id !== id);
+    setTodos(newTodos);
+  };
+  //------------\\ Todos CRUD operations \\-----------//
+
+  //------------ Events CRUD operations -----------//
   useEffect(() => {
     localStorage.setItem("events", JSON.stringify(events));
   }, [events]);
@@ -69,12 +98,47 @@ export const DataProvider = ({ children }) => {
     const newEvents = events.filter((e) => e.id !== id);
     setEvents(newEvents);
   };
+  //------------\\ Events CRUD operations \\-----------//
+
+// ----------- Habits CRUD operations -----------//
+   useEffect(() => {
+    localStorage.setItem("habits", JSON.stringify(habits));
+  }, [habits]);
+const addHabit = (habit) => {
+    if (!currentUser) return;
+    const newHabit = {
+      ...habit,
+      id: crypto.randomUUID(),
+      userId: currentUser,
+      createdAt: new Date().toISOString(),
+    };
+    const newHabits = [...habits, newHabit];
+    setHabits(newHabits);
+  };
+
+  const updateHabit = (id, updates) => {
+    const newHabits = habits.map(h => h.id === id ? { ...h, ...updates } : h);
+    setHabits(newHabits);
+  };
+
+  const deleteHabit = (id) => {
+    const newHabits = habits.filter(h => h.id !== id);
+    setHabits(newHabits);
+  };
+
+// -----------\\ Habits CRUD operations \\-----------//
 
   const value = {
     quote,
     fetchQuote,
     todos,
+    addTodo,
+    updateTodo,
+    deleteTodo,
     habits,
+    addHabit,
+    updateHabit,
+    deleteHabit,
     events,
     addEvent,
     updateEvent,
