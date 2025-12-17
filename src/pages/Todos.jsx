@@ -1,30 +1,58 @@
-import  { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useData } from '../contexts/DataContext';
-import './Todos.css';
+import { useState, useMemo } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useData } from "../contexts/DataContext";
+import "./Todos.css";
 
 const Todos = () => {
   const { todos, addTodo, updateTodo, deleteTodo } = useData();
   const { currentUser } = useAuth();
 
-  const userTodos = todos.filter(todo => todo.userId === currentUser);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState([]);
+  const [sortBy, setSortBy] = useState("deadline");
+  const [sortOrder, setSortOrder] = useState("asc");
 
-  
-  
+  const userTodos = useMemo(() => {
+    let filtered = todos.filter((t) => t.userId === currentUser);
+
+    if (statusFilter === "completed") {
+      filtered = filtered.filter((t) => t.completed);
+    } else if (statusFilter === "incomplete") {
+      filtered = filtered.filter((t) => !t.completed);
+    }
+
+    if (categoryFilter.length > 0) {
+      filtered = filtered.filter((t) => categoryFilter.includes(t.category));
+    }
+
+    filtered.sort((a, b) => {
+      let comparison = 0;
+      if (sortBy === "deadline") {
+        comparison =
+          new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      } else if (sortBy === "timeEstimate") {
+        comparison = a.timeEstimate - b.timeEstimate;
+      } else if (sortBy === "status") {
+        comparison = a.completed === b.completed ? 0 : a.completed ? 1 : -1;
+      }
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
+
+    return filtered;
+  }, [todos, currentUser, statusFilter, categoryFilter, sortBy, sortOrder]);
+
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
+    title: "",
+    description: "",
     timeEstimate: 30,
-    category: 'övrigt',
-    deadline: new Date().toISOString().split('T')[0],
+    category: "övrigt",
+    deadline: new Date().toISOString().split("T")[0],
   });
 
-  
-  const categories = ['hälsa', 'hushåll', 'jobbrelaterat', 'nöje', 'övrigt'];
+  const categories = ["hälsa", "hushåll", "jobbrelaterat", "nöje", "övrigt"];
 
- 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (editingId) {
@@ -38,11 +66,11 @@ const Todos = () => {
 
   const resetForm = () => {
     setFormData({
-      title: '',
-      description: '',
+      title: "",
+      description: "",
       timeEstimate: 30,
-      category: 'övrigt',
-      deadline: new Date().toISOString().split('T')[0],
+      category: "övrigt",
+      deadline: new Date().toISOString().split("T")[0],
     });
     setShowForm(false);
   };
@@ -53,20 +81,26 @@ const Todos = () => {
       description: todo.description,
       timeEstimate: todo.timeEstimate,
       category: todo.category,
-      deadline: todo.deadline.split('T')[0],
+      deadline: todo.deadline.split("T")[0],
     });
     setEditingId(todo.id);
     setShowForm(true);
   };
 
- 
+  const toggleCategory = (category) => {
+    setCategoryFilter((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
 
   return (
     <div className="todos-page">
       <div className="page-header">
         <h1>Ärenden</h1>
         <button onClick={() => setShowForm(!showForm)} className="btn-primary">
-          {showForm ? 'Stäng' : '+ Nytt ärende'}
+          {showForm ? "Stäng" : "+ Nytt ärende"}
         </button>
       </div>
 
@@ -78,7 +112,9 @@ const Todos = () => {
               <input
                 type="text"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 required
               />
             </div>
@@ -86,20 +122,26 @@ const Todos = () => {
               <label>Kategori</label>
               <select
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
               >
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
-          
+
           <div className="form-group">
             <label>Beskrivning</label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               rows={3}
             />
           </div>
@@ -110,7 +152,12 @@ const Todos = () => {
               <input
                 type="number"
                 value={formData.timeEstimate}
-                onChange={(e) => setFormData({ ...formData, timeEstimate: parseInt(e.target.value) || 0 })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    timeEstimate: parseInt(e.target.value) || 0,
+                  })
+                }
                 min="1"
               />
             </div>
@@ -119,7 +166,9 @@ const Todos = () => {
               <input
                 type="date"
                 value={formData.deadline}
-                onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, deadline: e.target.value })
+                }
                 required
               />
             </div>
@@ -127,7 +176,7 @@ const Todos = () => {
 
           <div className="form-actions">
             <button type="submit" className="btn-primary">
-              {editingId ? 'Uppdatera' : 'Lägg till'}
+              {editingId ? "Uppdatera" : "Lägg till"}
             </button>
             <button type="button" onClick={resetForm} className="btn-secondary">
               Avbryt
@@ -136,31 +185,105 @@ const Todos = () => {
         </form>
       )}
 
-    
+
+
+
+
+      <div className="filters-section">
+        <div className="filter-group">
+          <label>Status:</label>
+          <div className="filter-buttons">
+            <button
+              className={statusFilter === "all" ? "active" : ""}
+              onClick={() => setStatusFilter("all")}
+            >
+              Alla
+            </button>
+            <button
+              className={statusFilter === "incomplete" ? "active" : ""}
+              onClick={() => setStatusFilter("incomplete")}
+            >
+              Ej utförda
+            </button>
+            <button
+              className={statusFilter === "completed" ? "active" : ""}
+              onClick={() => setStatusFilter("completed")}
+            >
+              Slutförda
+            </button>
+          </div>
+        </div>
+
+        <div className="filter-group">
+          <label>Kategorier:</label>
+          <div className="filter-buttons">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                className={categoryFilter.includes(cat) ? "active" : ""}
+                onClick={() => toggleCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="filter-group">
+          <label>Sortera:</label>
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value="deadline">Deadline</option>
+            <option value="timeEstimate">Tidsestimat</option>
+            <option value="status">Status</option>
+          </select>
+          <button
+            onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+            className="sort-toggle"
+          >
+            {sortOrder === "asc" ? "↑ Stigande" : "↓ Fallande"}
+          </button>
+        </div>
+      </div>
 
       <div className="todos-list">
         {userTodos.length === 0 ? (
           <p className="empty-message">Inga ärenden matchar filtren</p>
         ) : (
-          userTodos.map(todo => (
-            <div key={todo.id} className={`todo-card ${todo.completed ? 'completed' : ''}`}>
+          userTodos.map((todo) => (
+            <div
+              key={todo.id}
+              className={`todo-card ${todo.completed ? "completed" : ""}`}
+            >
               <div className="todo-header">
                 <input
                   type="checkbox"
                   checked={todo.completed}
-                  onChange={(e) => updateTodo(todo.id, { completed: e.target.checked })}
+                  onChange={(e) =>
+                    updateTodo(todo.id, { completed: e.target.checked })
+                  }
                 />
                 <h3>{todo.title}</h3>
-                <span className={`category-badge ${todo.category}`}>{todo.category}</span>
+                <span className={`category-badge ${todo.category}`}>
+                  {todo.category}
+                </span>
               </div>
               <p className="todo-description">{todo.description}</p>
               <div className="todo-meta">
                 <span>⏱️ {todo.timeEstimate} min</span>
-                <span>📅 {new Date(todo.deadline).toLocaleDateString('sv-SE')}</span>
+                <span>
+                  📅 {new Date(todo.deadline).toLocaleDateString("sv-SE")}
+                </span>
               </div>
               <div className="todo-actions">
-                <button onClick={() => handleEdit(todo)} className="btn-edit">Redigera</button>
-                <button onClick={() => deleteTodo(todo.id)} className="btn-delete">Ta bort</button>
+                <button onClick={() => handleEdit(todo)} className="btn-edit">
+                  Redigera
+                </button>
+                <button
+                  onClick={() => deleteTodo(todo.id)}
+                  className="btn-delete"
+                >
+                  Ta bort
+                </button>
               </div>
             </div>
           ))
