@@ -15,25 +15,32 @@ import Login from "./pages/Login";
 // Importing the components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Guest from "./components/auth/Guest";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 function App() {
   return (
     <AuthProvider>
       <DataProvider>
-      <div className="App">
-        <Navbar />
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/todos" element={<Todos />} />
-            <Route path="/habits" element={<Habits />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+        <div className="App">
+          <Navbar />
+          <div className="content">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+
+              <Route element={<Guest />}>
+                <Route path="/login" element={<Login />} />
+              </Route>
+              <Route element={<ProtectedRoute />}>
+                <Route path="/todos" element={<Todos />} />
+                <Route path="/habits" element={<Habits />} />
+                <Route path="/events" element={<Events />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
       </DataProvider>
     </AuthProvider>
   );
