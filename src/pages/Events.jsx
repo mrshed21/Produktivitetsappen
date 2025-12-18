@@ -1,40 +1,46 @@
-import  { useState, useMemo } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useData } from '../contexts/DataContext';
-import './Events.css';
+import { useState, useMemo } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useData } from "../contexts/DataContext";
+import "./Events.css";
 
 const Events = () => {
   const { currentUser } = useAuth();
   const { events, addEvent, updateEvent, deleteEvent } = useData();
-  
+
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
-    start: '',
-    end: '',
+    name: "",
+    start: "",
+    end: "",
   });
 
-  const [timeFilter, setTimeFilter] = useState('all');
+  const [timeFilter, setTimeFilter] = useState("all");
 
   const now = new Date();
 
   const userEvents = useMemo(() => {
-    let filtered = events.filter(e => e.userId === currentUser);
+    let filtered = events.filter((e) => e.userId === currentUser);
 
-    if (timeFilter === 'upcoming') {
-      filtered = filtered.filter(e => new Date(e.start) >= now);
-    } else if (timeFilter === 'past') {
-      filtered = filtered.filter(e => new Date(e.start) < now);
+    if (timeFilter === "upcoming") {
+      filtered = filtered.filter((e) => new Date(e.start) >= now);
+    } else if (timeFilter === "past") {
+      filtered = filtered.filter((e) => new Date(e.start) < now);
     }
 
-    filtered.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+    filtered.sort(
+      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
+    );
 
     return filtered;
   }, [events, currentUser, timeFilter]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!formData.name || !formData.start || !formData.end) return;
+    if (new Date(formData.start) >= new Date(formData.end)) return;
+    if (new Date(formData.start) < now) return;
+
     if (editingId) {
       updateEvent(editingId, formData);
       setEditingId(null);
@@ -45,7 +51,7 @@ const Events = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', start: '', end: '' });
+    setFormData({ name: "", start: "", end: "" });
     setShowForm(false);
   };
 
@@ -61,12 +67,12 @@ const Events = () => {
 
   const formatDateTime = (dateStr) => {
     const date = new Date(dateStr);
-    return date.toLocaleString('sv-SE', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleString("sv-SE", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -77,7 +83,7 @@ const Events = () => {
       <div className="page-header">
         <h1>Händelser</h1>
         <button onClick={() => setShowForm(!showForm)} className="btn-primary">
-          {showForm ? 'Stäng' : '+ Ny händelse'}
+          {showForm ? "Stäng" : "+ Ny händelse"}
         </button>
       </div>
 
@@ -88,7 +94,9 @@ const Events = () => {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               required
             />
           </div>
@@ -99,7 +107,10 @@ const Events = () => {
               <input
                 type="datetime-local"
                 value={formData.start}
-                onChange={(e) => setFormData({ ...formData, start: e.target.value })}
+                min={new Date().toISOString().slice(0, 16)}
+                onChange={(e) =>
+                  setFormData({ ...formData, start: e.target.value })
+                }
                 required
               />
             </div>
@@ -108,7 +119,10 @@ const Events = () => {
               <input
                 type="datetime-local"
                 value={formData.end}
-                onChange={(e) => setFormData({ ...formData, end: e.target.value })}
+                min={formData.start}
+                onChange={(e) =>
+                  setFormData({ ...formData, end: e.target.value })
+                }
                 required
               />
             </div>
@@ -116,7 +130,7 @@ const Events = () => {
 
           <div className="form-actions">
             <button type="submit" className="btn-primary">
-              {editingId ? 'Uppdatera' : 'Lägg till'}
+              {editingId ? "Uppdatera" : "Lägg till"}
             </button>
             <button type="button" onClick={resetForm} className="btn-secondary">
               Avbryt
@@ -130,20 +144,20 @@ const Events = () => {
           <label>Visa:</label>
           <div className="filter-buttons">
             <button
-              className={timeFilter === 'all' ? 'active' : ''}
-              onClick={() => setTimeFilter('all')}
+              className={timeFilter === "all" ? "active" : ""}
+              onClick={() => setTimeFilter("all")}
             >
               Alla händelser
             </button>
             <button
-              className={timeFilter === 'upcoming' ? 'active' : ''}
-              onClick={() => setTimeFilter('upcoming')}
+              className={timeFilter === "upcoming" ? "active" : ""}
+              onClick={() => setTimeFilter("upcoming")}
             >
               Kommande
             </button>
             <button
-              className={timeFilter === 'past' ? 'active' : ''}
-              onClick={() => setTimeFilter('past')}
+              className={timeFilter === "past" ? "active" : ""}
+              onClick={() => setTimeFilter("past")}
             >
               Tidigare
             </button>
@@ -155,8 +169,11 @@ const Events = () => {
         {userEvents.length === 0 ? (
           <p className="empty-message">Inga händelser matchar filtren</p>
         ) : (
-          userEvents.map(event => (
-            <div key={event.id} className={`event-card ${isPast(event) ? 'past-event' : ''}`}>
+          userEvents.map((event) => (
+            <div
+              key={event.id}
+              className={`event-card ${isPast(event) ? "past-event" : ""}`}
+            >
               <div className="event-header">
                 <h3>{event.name}</h3>
                 {isPast(event) && <span className="past-badge">Tidigare</span>}
@@ -172,8 +189,15 @@ const Events = () => {
                 </div>
               </div>
               <div className="event-actions">
-                <button onClick={() => handleEdit(event)} className="btn-edit">Redigera</button>
-                <button onClick={() => deleteEvent(event.id)} className="btn-delete">Ta bort</button>
+                <button onClick={() => handleEdit(event)} className="btn-edit">
+                  Redigera
+                </button>
+                <button
+                  onClick={() => deleteEvent(event.id)}
+                  className="btn-delete"
+                >
+                  Ta bort
+                </button>
               </div>
             </div>
           ))
