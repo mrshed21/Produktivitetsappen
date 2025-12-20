@@ -18,6 +18,10 @@ import Footer from "./components/Footer";
 import Guest from "./components/auth/Guest";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
+
+// importing toast container
+import { ToastContainer } from 'react-toastify';
+
 function App() {
   return (
     <AuthProvider>
@@ -40,6 +44,7 @@ function App() {
             </Routes>
           </div>
           <Footer />
+          <ToastContainer position="bottom-right" autoClose={3000} />
         </div>
       </DataProvider>
     </AuthProvider>

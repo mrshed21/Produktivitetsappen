@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
 import "./Events.css";
+import { toast } from "react-toastify";
 
 const Events = () => {
   const { currentUser } = useAuth();
@@ -38,8 +39,14 @@ const Events = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.name || !formData.start || !formData.end) return;
-    if (new Date(formData.start) >= new Date(formData.end)) return;
-    if (new Date(formData.start) < now) return;
+    if (new Date(formData.start) > new Date(formData.end)) {
+      toast.error("Startdatum måste vara före slutdatum.");
+      return;
+    }
+    if (new Date(formData.start) < now) {
+      toast.error("Startdatum måste vara i framtiden.");
+      return;
+    }
 
     if (editingId) {
       updateEvent(editingId, formData);
@@ -48,6 +55,7 @@ const Events = () => {
       addEvent(formData);
     }
     resetForm();
+    toast.success("Händelsen har sparats.");
   };
 
   const resetForm = () => {
@@ -63,6 +71,11 @@ const Events = () => {
     });
     setEditingId(event.id);
     setShowForm(true);
+  };
+
+  const handleDelete = (id) => {
+    deleteEvent(id);
+    toast.error("Händelsen har tagits bort.", { closeOnClick: true });
   };
 
   const formatDateTime = (dateStr) => {
@@ -193,7 +206,7 @@ const Events = () => {
                   Redigera
                 </button>
                 <button
-                  onClick={() => deleteEvent(event.id)}
+                  onClick={() => handleDelete(event.id)}
                   className="btn-delete"
                 >
                   Ta bort

@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
 import "./Todos.css";
+import { toast } from "react-toastify";
 
 const Todos = () => {
   const { todos, addTodo, updateTodo, deleteTodo } = useData();
@@ -62,6 +63,7 @@ const Todos = () => {
       addTodo({ ...formData, completed: false });
     }
     resetForm();
+    toast.success("Ärendet har sparats.");
   };
 
   const resetForm = () => {
@@ -279,7 +281,7 @@ const Todos = () => {
                   Redigera
                 </button>
                 <button
-                  onClick={() => deleteTodo(todo.id)}
+                  onClick={() => { toast.error("Ärendet har tagits bort.", { closeOnClick: true }); deleteTodo(todo.id); }}
                   className="btn-delete"
                 >
                   Ta bort

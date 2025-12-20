@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import './Habits.css';
+import { toast } from 'react-toastify';
 
 const Habits = () => {
   const { currentUser } = useAuth();
@@ -48,6 +49,7 @@ const Habits = () => {
     addHabit({ ...formData, repetitions: 0 });
     setFormData({ title: '', priority: 'mellan' });
     setShowForm(false);
+    toast.success("Rutinen har lagts till.");
   };
 
   const adjustRepetitions = (id, delta) => {
@@ -59,6 +61,7 @@ const Habits = () => {
 
   const resetRepetitions = (id) => {
     updateHabit(id, { repetitions: 0 });
+    toast.success("Antal repetitioner har återställts.");
   };
 
   const togglePriorityFilter = (priority) => {
@@ -171,7 +174,7 @@ const Habits = () => {
                 </button>
               </div>
 
-              <button onClick={() => deleteHabit(habit.id)} className="btn-delete">
+              <button onClick={() => { toast.error("Rutinen har tagits bort.", { closeOnClick: true }); deleteHabit(habit.id); }} className="btn-delete">
                 Ta bort
               </button>
             </div>

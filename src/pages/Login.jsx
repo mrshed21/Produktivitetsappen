@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -16,7 +17,7 @@ const Login = () => {
     setError('');
 
     if (!username.trim() || !password.trim()) {
-      setError('Vänligen fyll i alla fält');
+      toast.error('Vänligen fyll i alla fält');
       return;
     }
 
@@ -24,18 +25,19 @@ const Login = () => {
       const success = register(username, password);
       if (success) {
         setError('');
-        alert('Registrering lyckades! Du kan nu logga in.');
+        toast.success('Registrering lyckades! Du kan nu logga in.');
         setIsRegister(false);
         setPassword('');
       } else {
-        setError('Användarnamn finns redan');
+        toast.error('Användarnamn finns redan');
       }
     } else {
       const success = login(username, password);
       if (success) {
         navigate('/');
+        toast.success(`Välkommen ${username}!`);
       } else {
-        setError('Felaktigt användarnamn eller lösenord');
+        toast.error('Felaktigt användarnamn eller lösenord');
       }
     }
   };

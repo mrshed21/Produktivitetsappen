@@ -3,6 +3,7 @@ import "./navbar.css";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import Logo from "../assets/logo.png";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const { currentUser, logout } = useAuth();
@@ -34,7 +35,7 @@ const Navbar = () => {
       <div className="nav-user">
         {currentUser && <span className="username">{currentUser}</span>}
         {currentUser ? (
-          <button onClick={logout} className="btn-logout">
+          <button onClick={() => { toast.info("Du har loggat ut.", { closeOnClick: true }); logout(); }} className="btn-logout">
             Logga ut
           </button>
         ) : (
