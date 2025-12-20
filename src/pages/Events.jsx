@@ -89,7 +89,7 @@ const Events = () => {
     });
   };
 
-  const isPast = (event) => new Date(event.start) < now;
+  const isPast = (event) => new Date(event.end) < now;
 
   return (
     <div className="events-page">
