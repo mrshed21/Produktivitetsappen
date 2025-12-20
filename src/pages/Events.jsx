@@ -39,7 +39,6 @@ const Events = () => {
     e.preventDefault();
     if (!formData.name || !formData.start || !formData.end) return;
     if (new Date(formData.start) >= new Date(formData.end)) return;
-    if (new Date(formData.start) < now) return;
 
     if (editingId) {
       updateEvent(editingId, formData);
@@ -76,7 +75,7 @@ const Events = () => {
     });
   };
 
-  const isPast = (event) => new Date(event.start) < now;
+  const isPast = (event) => new Date(event.end) < now;
 
   return (
     <div className="events-page">
