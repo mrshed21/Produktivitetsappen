@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import "./navbar.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import Logo from "../assets/logo.png";
 import { toast } from "react-toastify";
@@ -8,6 +8,21 @@ import { toast } from "react-toastify";
 const Navbar = () => {
   const { currentUser, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+
+  useEffect(() => {
+  const handler = (e) => {
+    if (!e.target.closest(".navbar")) {
+      setIsOpen(false);
+    }
+  };
+  document.addEventListener("click", handler);
+  return () => document.removeEventListener("click", handler);
+}, []);
+
 
   const navigate = useNavigate();
   const navItems = [
